@@ -2,7 +2,7 @@
 
 $servername = "localhost";
 $username = "root";
-$password = "123456";
+$password = "admin1";
 $my_db = "camagru_db";
 
 try {
@@ -54,6 +54,7 @@ try {
 		)";
 	$conn->exec($sql3);
 	echo "Table comments created successfully" . PHP_EOL;
+
 }
 catch(PDOException $e) {
     echo $sql . "<br>" . $e->getMessage() . PHP_EOL;

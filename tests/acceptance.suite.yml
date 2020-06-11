@@ -1,0 +1,24 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+actor: AcceptanceTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: http://localhost/Camagru
+        - \Helper\Acceptance
+        - Db:
+            dsn: 'mysql:host=localhost;dbname=camagru_db'
+            user: 'root'
+            password: 'admin1'
+            dump: 'tests/_data/dump.sql'
+            populate: true # run populator before all tests
+            # cleanup: true # run populator before each test
+            populator: 'mysql -u $user -p -h $host $dbname < $dump'
+            initial_queries:
+                - 'CREATE DATABASE IF NOT EXISTS camagru_db;'
+
+    step_decorators: ~  

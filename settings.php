@@ -34,7 +34,7 @@
                 $stmt->execute();
                 $results = $stmt->fetch();
             ?>
-             <?php if ($results['notify'] === "Y") : ?>
+             <?php if (isset($results['notify']) && $results['notify'] === "Y") : ?>
                 <label class="switch">
                     <input type="checkbox" checked="true" name="notify" class="checkbox">
                     <span class="slider round"></span>

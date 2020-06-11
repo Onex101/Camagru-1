@@ -41,7 +41,7 @@
 
             //Comments
             $str .= '<div id="comments">';
-            $stmt = $pdo->prepare("SELECT * FROM camagru_db.comments WHERE pic_id=".$pic_id." ORDER BY sub_datetime DESC LIMIT 5");
+            $stmt = $pdo->prepare("SELECT * FROM camagru_db.comments WHERE pic_id=".$pic_id." ORDER BY sub_datetime DESC");
             $stmt->execute();
             while ($row = $stmt->fetch()) {
                 $str .= '<div style="display: inline; font-size: 70%; font-weight: bold; padding-right: 5px;">';
@@ -117,7 +117,7 @@
 
 
             //Send email
-            $base_url = "http://localhost:8080/Camagru//";
+            $base_url = "http://localhost/Camagru/";
 
             $header = "From: noreply@localhost.co.za\r\n";
             $header .= "Reply-To: noreply@localhost.co.za\r\n";

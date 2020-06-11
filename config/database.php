@@ -3,7 +3,7 @@
 // initializing variables
 $servername = "localhost";
 $username = "root";
-$password = "123456";
+$password = "admin1";
 $my_db = "camagru_db";
 
 //connecting to Database

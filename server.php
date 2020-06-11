@@ -22,17 +22,16 @@
 		if (empty($password_1)) { array_push($errors, "Password is required"); }
 		if (empty($password_2)) { array_push($errors, "Password confirmation is required"); }
 		if ($password_1 != $password_2) { array_push($errors, "Your two passwords do not match"); }
-		
-		if (count($errors) == 0) {
+		if (count($errors) === 0) {
 			$_SESSION['username'] = $username;
 			try
 			{
 				$stmt = $pdo->prepare("SELECT username, email FROM users WHERE username=:username OR email=:email");
 				$stmt->execute(array(':username'=>$username, ':email'=>$email));
 				$row=$stmt->fetch(PDO::FETCH_ASSOC);
-			
-				if ($row['username']==$username) { array_push($errors, "sorry username already taken !"); }
-				else if ($row['email']==$email) { array_push($errors, "sorry email id already taken !"); }
+
+				if (isset($row['username']) && $row['username']===$username) { array_push($errors, "sorry username already taken !"); return; }
+				else if (isset($row['email']) &&  $row['email']===$email) { array_push($errors, "sorry email already taken !"); return;}
 				else { echo "Username and email OK!<br/>"; }
 			}
 			catch(PDOException $e) {
@@ -44,7 +43,7 @@
 			$sql = "INSERT INTO users (username, name, surname, email, password, activation_code) VALUES ('$username', '$name', '$surname', '$email', '$hash', '$activation_code')";
 			$pdo->exec($sql);
 
-			$base_url = "http://localhost:8080/Camagru//";
+			$base_url = "http://localhost/Camagru/";
 			$lastInsertId = $pdo->lastInsertId();
 			if($lastInsertId) {
 				$msg = "You have signed up Successfully";
@@ -73,6 +72,9 @@
 			unset($_SESSION['window']);
 			// header('Location: index.php');
 		}
+		else{
+			$_SESSION['error'] = implode(" ",$errors);
+		}
 	}
 
 	// LOGIN USER
@@ -84,20 +86,19 @@
 		
 		if (empty($username)) { array_push($errors, "Username is required"); }
 		if (empty($password)) { array_push($errors, "Password is required"); }
-
 		if (count($errors) == 0) {
 			$password = hash("whirlpool", $password);		
 			
 			//Retrieve the user account information for the given username.
 			$stmt = $pdo->prepare("SELECT * FROM camagru_db.users WHERE username = :usr AND password = :pass");
-
+			
 			//Execute.
 			$stmt->execute(["usr"=>$username, "pass"=>$password]);
 
 			//Fetch row.
 			$user = $stmt->fetchAll();
-
-			if (sizeof($user) == 1) {
+			
+			if (sizeof($user) === 1) {
 				//checking if verified
 				$stmt = $pdo->prepare("SELECT * FROM camagru_db.users WHERE username = :usr AND activated = 'Y'");
 				$stmt->execute(["usr"=>$username]);
@@ -116,6 +117,9 @@
 			unset($_SESSION['window']);
 			// header('location: index.php');
 		}
+		else{
+			$_SESSION['error'] =  implode(" ",$errors);
+		}
 	}
 
 	// Forgot Password
@@ -126,7 +130,7 @@
 		$results = $stmt->fetch();
 		$username = $results['username'];
 		$token = $results['activation_code'];
-		$ver_link = 'http://localhost:8080/Camagru//index.php?password_reset="1"&token= "'.$token.'"';
+		$ver_link = 'http://localhost/Camagru/index.php?password_reset="1"&token= "'.$token.'"';
 
 		$email = $_POST['email'];
 		$header = "From: noreply@localhost.co.za\r\n";
